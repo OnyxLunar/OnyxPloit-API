@@ -38,15 +38,10 @@ function Library:LoadScript(...)
     end
 end
 
-function Library:ChangeSpeed(...)
-    local args = {...}
-    for i, v in ipairs(args) do
-        if player.Character then
-	        applySpeed(player.Character, tostring(v))
-        end
-
-        --player.CharacterAdded:Connect(applySpeed)
-    end
+function Library:ChangeSpeed(speed)
+       if player.Character then
+	        applySpeed(player.Character, speed)
+       end
 end
 
 function Library:CrashGame()
@@ -55,6 +50,13 @@ function Library:CrashGame()
 	        	applySpeed(player.Character, 946498589898978797976737653564959765494654645464559498457547875456546266965146591465459621454857845145)
 			end
     end
+end
+
+function Library:SendNotification(desc)
+	game:GetService("StarterGui"):SetCore("SendNotification",{
+		Title = name,
+		Text = desc
+	})
 end
 
 return function(name)
