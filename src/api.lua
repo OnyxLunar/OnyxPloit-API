@@ -59,18 +59,30 @@ UserInputService.InputBegan:Connect(function(input, gpe)
 	end
 end)
 
+UserInputService.InputEnded:Connect(function(input)
+	if moveKeys[input.KeyCode.Name] ~= nil then
+		moveKeys[input.KeyCode.Name] = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.LeftControl then
+		moveKeys.Ctrl = false
+	end
+end)
+
 RunService.RenderStepped:Connect(function()
 	if not flying then return end
 
 	local camera = workspace.CurrentCamera
 	local direction = Vector3.zero
 
-	if moveKeys.W then direction += camera.CFrame.LookVector end
-	if moveKeys.S then direction -= camera.CFrame.LookVector end
-	if moveKeys.A then direction -= camera.CFrame.RightVector end
-	if moveKeys.D then direction += camera.CFrame.RightVector end
-	if moveKeys.Space then direction += Vector3.new(0, 1, 0) end
-	if moveKeys.Ctrl then direction -= Vector3.new(0, 1, 0) end
+	local look = camera.CFrame.LookVector
+	local flatLook = Vector3.new(look.X, 0, look.Z).Unit
+	local right = camera.CFrame.RightVector
+
+	if moveKeys.W then direction += flatLook end
+	if moveKeys.S then direction -= flatLook end
+	if moveKeys.A then direction -= right end
+	if moveKeys.D then direction += right end
 
 	if direction.Magnitude > 0 then
 		direction = direction.Unit
