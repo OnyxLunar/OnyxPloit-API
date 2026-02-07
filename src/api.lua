@@ -2,7 +2,86 @@ local Library = {}
 Library.__index = Library
 
 local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
 local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local humanoid = character:WaitForChild("Humanoid")
+
+local flying = false
+local flySpeed = 60
+
+local bodyVelocity
+local bodyGyro
+
+local moveKeys = {
+	W = false,
+	A = false,
+	S = false,
+	D = false,
+	Space = false,
+	Ctrl = false
+}
+
+function ToggleFly(Speed)
+	if flying then
+		-- Stop flying
+		flying = false
+		humanoid.PlatformStand = false
+
+		if bodyVelocity then bodyVelocity:Destroy() end
+		if bodyGyro then bodyGyro:Destroy() end
+	else
+		-- Start flying
+		flying = true
+		flySpeed = Speed or flySpeed
+		humanoid.PlatformStand = true
+
+		bodyVelocity = Instance.new("BodyVelocity")
+		bodyVelocity.MaxForce = Vector3.new(1e9, 1e9, 1e9)
+		bodyVelocity.Velocity = Vector3.zero
+		bodyVelocity.Parent = humanoidRootPart
+
+		bodyGyro = Instance.new("BodyGyro")
+		bodyGyro.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
+		bodyGyro.P = 1e4
+		bodyGyro.CFrame = humanoidRootPart.CFrame
+		bodyGyro.Parent = humanoidRootPart
+	end
+end
+
+UserInputService.InputEnded:Connect(function(input)
+	if moveKeys[input.KeyCode.Name] ~= nil then
+		moveKeys[input.KeyCode.Name] = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.LeftControl then
+		moveKeys.Ctrl = false
+	end
+end)
+
+RunService.RenderStepped:Connect(function()
+	if not flying then return end
+
+	local camera = workspace.CurrentCamera
+	local direction = Vector3.zero
+
+	if moveKeys.W then direction += camera.CFrame.LookVector end
+	if moveKeys.S then direction -= camera.CFrame.LookVector end
+	if moveKeys.A then direction -= camera.CFrame.RightVector end
+	if moveKeys.D then direction += camera.CFrame.RightVector end
+	if moveKeys.Space then direction += Vector3.new(0, 1, 0) end
+	if moveKeys.Ctrl then direction -= Vector3.new(0, 1, 0) end
+
+	if direction.Magnitude > 0 then
+		direction = direction.Unit
+	end
+
+	bodyVelocity.Velocity = direction * flySpeed
+	bodyGyro.CFrame = camera.CFrame
+end)
 
 local function applySpeed(character, DESIRED_SPEED)
 	local humanoid = character:WaitForChild("Humanoid")
@@ -64,6 +143,18 @@ function Library:SendNotification(title, desc)
     if not success then
         warn("Notification failed:", err)
     end
+end
+
+function Library:ToggleFly(speed)
+	ToggleFly(speed)
+
+	--[[if moveKeys[input.KeyCode.Name] ~= nil then
+		moveKeys[input.KeyCode.Name] = true
+	end
+
+	if input.KeyCode == Enum.KeyCode.LeftControl then
+		moveKeys.Ctrl = true
+	end]]
 end
 
 return function(name)
