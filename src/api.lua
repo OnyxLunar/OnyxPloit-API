@@ -71,38 +71,35 @@ end)
 
 RunService.RenderStepped:Connect(function()
 	if not flying then return end
+	if not bodyVelocity or not bodyGyro then return end
 
 	local camera = workspace.CurrentCamera
-	local direction = Vector3.zero
+
+	local moveDir = Vector3.zero
 
 	local look = camera.CFrame.LookVector
-	local flatLook = Vector3.new(look.X, 0, look.Z).Unit
-	local right = camera.CFrame.RightVector
-
-	if moveKeys.W then direction += flatLook end
-	if moveKeys.S then direction -= flatLook end
-	if moveKeys.A then direction -= right end
-	if moveKeys.D then direction += right end
-
-	if direction.Magnitude > 0 then
-		direction = direction.Unit
+	local flatLook = Vector3.new(look.X, 0, look.Z)
+	if flatLook.Magnitude > 0 then
+		flatLook = flatLook.Unit
 	end
 
-	bodyVelocity.Velocity = direction * flySpeed
+	local right = camera.CFrame.RightVector
+
+	if moveKeys.W then moveDir += flatLook end
+	if moveKeys.S then moveDir -= flatLook end
+	if moveKeys.A then moveDir -= right end
+	if moveKeys.D then moveDir += right end
+
+	if moveKeys.Space then moveDir += Vector3.new(0, 1, 0) end
+	if moveKeys.Ctrl then moveDir += Vector3.new(0, -1, 0) end
+
+	if moveDir.Magnitude > 0 then
+		moveDir = moveDir.Unit
+	end
+
+	bodyVelocity.Velocity = moveDir * flySpeed
 	bodyGyro.CFrame = camera.CFrame
 end)
-
-local function applySpeed(character, DESIRED_SPEED)
-	local humanoid = character:WaitForChild("Humanoid")
-
-	humanoid.WalkSpeed = DESIRED_SPEED
-
-	humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
-		if humanoid.WalkSpeed ~= DESIRED_SPEED then
-			humanoid.WalkSpeed = DESIRED_SPEED
-		end
-	end)
-end
 
 function Library.new(name)
     local self = setmetatable({}, Library)
