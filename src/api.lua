@@ -19,8 +19,7 @@ function Library:LoadScript(...)
     local args = {...}
     for i, v in ipairs(args) do
         print(string.format("[%s] Injecting Script: %s", self.Name, tostring(v)))
-        local script = string.format("%s", tosring(v))
-        loadstring(game:HttpGet(script, true))()
+        loadstring(game:HttpGet(string.format("%s", tosring(v)), true))()
     end
 end
 
