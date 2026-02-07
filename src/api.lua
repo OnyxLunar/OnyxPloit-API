@@ -52,10 +52,10 @@ function Library:CrashGame()
     end
 end
 
-function Library:SendNotification(desc)
+function Library:SendNotification(title, desc)
     local success, err = pcall(function()
         game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = self.Name,
+            Title = "[%s]", self.Name + tostring(title),
             Text = tostring(desc),
             Duration = 5
         })
