@@ -101,6 +101,18 @@ RunService.RenderStepped:Connect(function()
 	bodyGyro.CFrame = camera.CFrame
 end)
 
+local function applySpeed(character, DESIRED_SPEED)
+	local humanoid = character:WaitForChild("Humanoid")
+
+	humanoid.WalkSpeed = DESIRED_SPEED
+
+	humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+		if humanoid.WalkSpeed ~= DESIRED_SPEED then
+			humanoid.WalkSpeed = DESIRED_SPEED
+		end
+	end)
+end
+
 function Library.new(name)
     local self = setmetatable({}, Library)
     self.Name = name or "OnyxPloit"
@@ -124,9 +136,13 @@ function Library:LoadScript(...)
 end
 
 function Library:ChangeSpeed(speed)
-       if player.Character then
-	        applySpeed(player.Character, speed)
-       end
+	if flying then
+		flySpeed = speed
+	else
+		if player.Character then
+			applySpeed(player.Character, speed)
+		end
+	end
 end
 
 function Library:CrashGame()
