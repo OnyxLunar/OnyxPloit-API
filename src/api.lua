@@ -11,7 +11,7 @@ end
 function Library:Print(...)
     local args = {...}
     for i, v in ipairs(args) do
-        print(string.format("[%s] Arg %d -> %s", self.Name, i, tostring(v)))
+        print(string.format("[%s] %s", self.Name, tostring(v)))
     end
 end
 
