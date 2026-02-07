@@ -25,40 +25,37 @@ local moveKeys = {
 	Ctrl = false
 }
 
-function ToggleFly(Speed)
+local function ToggleFlyInternal(Speed)
 	if flying then
-		-- Stop flying
 		flying = false
 		humanoid.PlatformStand = false
-
 		if bodyVelocity then bodyVelocity:Destroy() end
 		if bodyGyro then bodyGyro:Destroy() end
 	else
-		-- Start flying
 		flying = true
 		flySpeed = Speed or flySpeed
 		humanoid.PlatformStand = true
 
 		bodyVelocity = Instance.new("BodyVelocity")
 		bodyVelocity.MaxForce = Vector3.new(1e9, 1e9, 1e9)
-		bodyVelocity.Velocity = Vector3.zero
 		bodyVelocity.Parent = humanoidRootPart
 
 		bodyGyro = Instance.new("BodyGyro")
 		bodyGyro.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
 		bodyGyro.P = 1e4
-		bodyGyro.CFrame = humanoidRootPart.CFrame
 		bodyGyro.Parent = humanoidRootPart
 	end
 end
 
-UserInputService.InputEnded:Connect(function(input)
+UserInputService.InputBegan:Connect(function(input, gpe)
+	if gpe then return end
+
 	if moveKeys[input.KeyCode.Name] ~= nil then
-		moveKeys[input.KeyCode.Name] = false
+		moveKeys[input.KeyCode.Name] = true
 	end
 
 	if input.KeyCode == Enum.KeyCode.LeftControl then
-		moveKeys.Ctrl = false
+		moveKeys.Ctrl = true
 	end
 end)
 
@@ -146,15 +143,7 @@ function Library:SendNotification(title, desc)
 end
 
 function Library:ToggleFly(speed)
-	ToggleFly(speed)
-
-	--[[if moveKeys[input.KeyCode.Name] ~= nil then
-		moveKeys[input.KeyCode.Name] = true
-	end
-
-	if input.KeyCode == Enum.KeyCode.LeftControl then
-		moveKeys.Ctrl = true
-	end]]
+	ToggleFlyInternal(speed)
 end
 
 return function(name)
