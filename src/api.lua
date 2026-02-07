@@ -8,7 +8,7 @@ function Library.new(name)
     return self
 end
 
-function Library:PrintArg(...)
+function Library:Print(...)
     local args = {...}
     for i, v in ipairs(args) do
         print(string.format("[%s] Arg %d -> %s", self.Name, i, tostring(v)))
