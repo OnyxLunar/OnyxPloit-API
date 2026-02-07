@@ -154,16 +154,23 @@ function Library:CrashGame()
 end
 
 function Library:SendNotification(title, desc)
-    local success, err = pcall(function()
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = string.format("[%s] %s", self.Name, tostring(title)),
-            Text = tostring(desc),
-            Duration = 5
-        })
-    end)
+    local StarterGui = game:GetService("StarterGui")
+    local success
+
+    for i = 1, 5 do
+        success = pcall(function()
+            StarterGui:SetCore("SendNotification", {
+                Title = string.format("[%s] %s", self.Name, tostring(title)),
+                Text = tostring(desc),
+                Duration = 5
+            })
+        end)
+        if success then break end
+        task.wait(0.5)
+    end
 
     if not success then
-        warn("Notification failed:", err)
+        warn("Notification failed after retries")
     end
 end
 
