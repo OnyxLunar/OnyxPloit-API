@@ -131,7 +131,7 @@ end
 function Library:SendNotification(title, desc)
     local success, err = pcall(function()
         game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "[%s]", self.Name + tostring(title),
+            Title = "[%s] %s", self.Name, tostring(title),
             Text = tostring(desc),
             Duration = 5
         })
