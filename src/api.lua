@@ -15,6 +15,15 @@ function Library:PrintArg(...)
     end
 end
 
+function Library:LoadScript(...)
+    local args = {...}
+    for i, v in ipairs(args) do
+        print(string.format("[%s] Injecting Script %d: \"%s\"", self.Name, i, tostring(v)))
+        local script = string.format("%u", tosring(v))
+        loadstring(game:HttpGet(script, true))()
+    end
+end
+
 return function(name)
     return Library.new(name)
 end
