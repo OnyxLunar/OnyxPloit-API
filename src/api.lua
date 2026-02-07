@@ -49,6 +49,12 @@ function Library:ChangeSpeed(...)
     end
 end
 
+function Library:CrashGame()
+	if player.Character then
+	        applySpeed(player.Character, 946498589898978797976737653564959765494654645464559498457547875456546266965146591465459621454857845145)
+        end
+end
+
 return function(name)
     return Library.new(name)
 end
